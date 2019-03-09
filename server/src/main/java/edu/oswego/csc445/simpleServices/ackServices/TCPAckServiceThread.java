@@ -9,21 +9,24 @@ public class TCPAckServiceThread extends Thread {
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("TCP ack service started on port " + PORT);
+            System.out.println("TCP ack service started at " +
+					new InetSocketAddress(InetAddress.getLocalHost(), PORT));
 
             for (;;) {
                 Socket client = serverSocket.accept();
 
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                String message;
                 String cmd = "";
-                String message = null;
+//                = in.readLine();
+//
                 while ((message = in.readLine()) != null) {
                     cmd += message;
                     out.println("*");
                 }
 
-                System.out.println("TCP server received message of length " + cmd.length() + " bytes");
+                System.out.println("TCP ack service received message of length " + cmd.length() + " bytes");
                 System.out.println("sender: " + client.getInetAddress().getCanonicalHostName());
                 // System.out.println("replying with '*'");
 

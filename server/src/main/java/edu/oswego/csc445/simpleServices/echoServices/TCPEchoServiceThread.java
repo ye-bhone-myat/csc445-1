@@ -9,7 +9,8 @@ public class TCPEchoServiceThread extends Thread {
     public void run() {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("TCP echo service started on port " + PORT);
+            System.out.println("TCP echo service started at " +
+					new InetSocketAddress(InetAddress.getLocalHost(), PORT));
 
             for (;;) {
                 Socket client = serverSocket.accept();
@@ -18,12 +19,10 @@ public class TCPEchoServiceThread extends Thread {
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
                 String cmd = in.readLine();
-
-                String reply = cmd;
+				out.println(cmd);
 
                 System.out.println("TCP server received message of length " + cmd.length() + " bytes");
                 System.out.println("sender: " + client.getInetAddress().getCanonicalHostName());
-                out.println(reply);
 
                 out.close();
                 in.close();
