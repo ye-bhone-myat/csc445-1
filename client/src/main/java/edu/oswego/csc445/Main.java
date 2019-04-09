@@ -13,35 +13,19 @@ public class Main {
 
 	public static void main(String args[]) throws IOException {
 
-//		String host = "pi.cs.oswego.edu";
-//		int port = 3701;
-//		InetAddress host =
-//		int messageSize = 1024;
-//		int nMessages = 16;
-
-//		double rtt = new UDPClient(host, port).t3(messageSize, nMessages);
-//		System.out.println("RTT: " + rtt );
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-//		Pattern pattern = Pattern.compile("(-[tu]) (\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3}) ([1-3])");
-//		Matcher matcher = pattern.matcher();
 
 		if (args.length == 3) {
 			String arg = args[0] + " " + args[1] + " " + args[2];
-//			String arg = "-u 129.3.20.26 3";
-//			System.out.println(arg);
 			Matcher matcher = Pattern.compile("(-[tu]) (\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3}) ([1-3])")
 					.matcher(arg);
 			matcher.matches();
 			String protocol = matcher.group(1);
 			String measurement = matcher.group(6);
-//			String[] ip = args[1].split("\\.");
 			byte[] host = {(byte) Integer.parseInt(matcher.group(2)), (byte) Integer.parseInt(matcher.group(3)),
 					(byte) Integer.parseInt(matcher.group(4)), (byte) Integer.parseInt(matcher.group(5))};
-//			int port = Integer.parseInt(args[2]);
 			int port;
-//			int messageSize = Integer.parseInt(args[3]);
-//			int nMessages = Integer.parseInt(args[4]);
 			int messageSize = 0;
 			int nMessages = 0;
 			switch (protocol) {
@@ -58,7 +42,7 @@ public class Main {
 								System.out.println("Please enter a number");
 								System.exit(1);
 							}
-							System.out.println(new TCPClient(host, port).t1(messageSize));
+							new TCPClient(host, port).t1(messageSize);
 							break;
 						case "2":
 							System.out.println("Measuring throughput ");
@@ -69,7 +53,7 @@ public class Main {
 								System.out.println("Please enter a number");
 								System.exit(1);
 							}
-							System.out.println(new TCPClient(host, port).t2(messageSize));
+							new TCPClient(host, port).t2(messageSize);
 							break;
 						case "3":
 							System.out.println("Measuring interaction between message size and number of messages ");
@@ -84,7 +68,7 @@ public class Main {
 								System.out.println("Please enter a number");
 								System.exit(1);
 							}
-							System.out.println(new TCPClient(host, port).t3(messageSize, nMessages));
+							new TCPClient(host, port).t3(messageSize, nMessages);
 							break;
 						default:
 							System.out.println("Measurement:");
@@ -96,6 +80,7 @@ public class Main {
 					break;
 				case "-u":
 					port = 3701;
+					System.out.println("Using UDP");
 					switch (measurement) {
 						case "1":
 							System.out.println("Measuring round-trip latency");
@@ -106,7 +91,7 @@ public class Main {
 								System.out.println("Please enter a number");
 								System.exit(1);
 							}
-							System.out.println(new UDPClient(host, port).t1(messageSize));
+							new UDPClient(host, port).t1(messageSize);
 							break;
 						case "2":
 							System.out.println("Throughput measurement not available for UDP");
@@ -124,7 +109,7 @@ public class Main {
 								System.out.println("Please enter a number");
 								System.exit(1);
 							}
-							System.out.println(new UDPClient(host, port).t3(messageSize, nMessages));
+							new UDPClient(host, port).t3(messageSize, nMessages);
 							break;
 						default:
 							System.out.println("Measurement:");

@@ -15,7 +15,7 @@ public class TCPEchoServiceThread extends Thread {
             for (;;) {
                 Socket client = serverSocket.accept();
 
-                PrintWriter out = new PrintWriter(client.getOutputStream());
+                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
                 String cmd = in.readLine();
@@ -26,7 +26,7 @@ public class TCPEchoServiceThread extends Thread {
 
                 out.close();
                 in.close();
-                client.close();
+                // client.close();
             }
         } catch (IOException ex) {
             ex.printStackTrace();

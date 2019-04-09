@@ -1,9 +1,7 @@
 package edu.oswego.csc445.clients;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -11,12 +9,16 @@ import java.util.Arrays;
 
 public class TCPClient {
 
+	// private static final int ATTEMPTS = 100;
 	private byte[] host;
 	private int port;
+	// private String path;
 
 	public TCPClient(byte[] host, int port) {
 		this.host = host;
 		this.port = port;
+		// path = "data" + File.separatorChar +
+				// (host[0] & 0xFF) + "." + (host[1] & 0xFF) + "." + (host[2] & 0xFF) + "." + (host[3] & 0xFF);
 	}
 
 	/**
@@ -34,13 +36,11 @@ public class TCPClient {
 
 		try {
 			echoSocket = new Socket(InetAddress.getByAddress(host), port);
-			System.out.println("Socket created");
 			out = new PrintWriter(echoSocket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-			System.out.println("sockets and streams created");
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " +
-					host[0] + "." + host[0] + "." + host[0] + "." + host[0] + ".");
+					(host[0] & 0xFF) + "." + (host[1] & 0xFF) + "." + (host[2] & 0xFF) + "." + (host[3] & 0xFF)+ ".");
 			e.printStackTrace();
 			System.exit(1);
 		} catch (IOException e) {
@@ -58,12 +58,13 @@ public class TCPClient {
 					+ echoSocket.getInetAddress().getCanonicalHostName());
 			String message = new String(b);
 			long start = System.nanoTime();
-			out.println(message);
-			String received = in.readLine();
+			// for (int i = 0; i < ATTEMPTS; ++i) {
+				out.println(message);
+				in.readLine();
+			// }
 			rtt = (System.nanoTime() - start);
-//            System.out.println("Inbound message:");
-//            received = received.length() > 128 ? received.substring(0, 124) + "..." : received;
-//			System.out.println(received);
+			// new File(path).mkdirs();
+			// path +=  File.separatorChar + "TCP-1-" + messageSize + ".ser";
 			// close everything
 			out.close();
 			in.close();
@@ -72,6 +73,17 @@ public class TCPClient {
 			System.err.println("IO failure.");
 			ex.printStackTrace();
 		}
+
+		// ObjectOutputStream objOut;
+		// try {
+		// 	objOut = new ObjectOutputStream(new FileOutputStream(path));
+		// 	objOut.writeObject(new Record1(
+		// 			(host[0] & 0xFF) + "." + (host[1] & 0xFF) + "." + (host[2] & 0xFF) + "." + (host[3] & 0xFF),
+		// 			port, "TCP", rtt, messageSize));
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// }
+
 		return rtt;
 	}
 
@@ -86,6 +98,7 @@ public class TCPClient {
 		Socket echoSocket = null;
 		PrintWriter out = null;
 		BufferedReader in = null;
+		double throughput = 0;
 
 		try {
 			echoSocket = new Socket(InetAddress.getByAddress(host), port);
@@ -94,7 +107,7 @@ public class TCPClient {
 			in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " +
-					host[0] + "." + host[0] + "." + host[0] + "." + host[0] + ".");
+					host[0] + "." + host[1] + "." + host[2] + "." + host[3] + ".");
 			e.printStackTrace();
 			System.exit(1);
 		} catch (IOException e) {
@@ -106,19 +119,27 @@ public class TCPClient {
 		try {
 			// BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 			// while ((userInput = stdIn.readLine()) != null) {
-			byte[] message = new byte[messageSize * 1024];
-			Arrays.fill(message, (byte) 65);
+			byte[] bytes = new byte[messageSize * 1024];
+			Arrays.fill(bytes, (byte) 65);
+			String message = new String(bytes, "US-ASCII");
 			long transmit = System.nanoTime();
-			out.println(new String(message, "US-ASCII"));
-			// System.out.println("bleh");
-//             String received = in.readLine();
-			rtt = (System.nanoTime() - transmit);
-			String received = in.readLine();
+			for(int i = 0; i < ATTEMPTS; ++i){
+				out.println(message);
+			}
+			rtt = (System.nanoTime() - transmit) / ATTEMPTS;
+			String received, s;
+			received = "";
+			// while((s  = in.readLine()) != null){
+			// 	received += s;
+			// }
 			long size = messageSize * 1024 * 8;
-			double throughput = (size * 1000) / rtt;
-			System.out.println("message size: " + message.length);
+			throughput = (size * 10) / rtt;
+			System.out.println("message size: " + message.length());
 			System.out.println("throughput: " + throughput + " Mbps");
 			// }
+
+			// new File(path).mkdirs();
+			// path += File.separator + "TCP-2-" + messageSize + ".ser";
 
 			out.close();
 			in.close();
@@ -128,7 +149,20 @@ public class TCPClient {
 			System.err.println("IO failure.");
 			ex.printStackTrace();
 		}
-		return (1024 * messageSize) / rtt;
+
+		long size = messageSize * 1024 * 8;
+		throughput = (size * 1000) / rtt;
+
+		// ObjectOutputStream objOut;
+		// try {
+		// 	objOut = new ObjectOutputStream(new FileOutputStream(path));
+		// 	objOut.writeObject(new Record2(
+		// 			(host[0] & 0xFF) + "." + (host[1] & 0xFF) + "." + (host[2] & 0xFF) + "." + (host[3] & 0xFF),
+		// 			port, throughput, messageSize));
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// }
+		return ( 1000 * messageSize) / rtt;
 	}
 
 	/**
@@ -152,7 +186,7 @@ public class TCPClient {
 			in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " +
-					host[0] + "." + host[0] + "." + host[0] + "." + host[0] + ".");
+					host[0] + "." + host[1] + "." + host[2] + "." + host[3] + ".");
 			e.printStackTrace();
 			System.exit(1);
 		} catch (IOException e) {
@@ -173,6 +207,8 @@ public class TCPClient {
 			}
 			rtt = (System.nanoTime() - transmit);
 
+			// new File(path).mkdirs();
+			// path += File.separator + "TCP-3-" + messageSize + ".ser";
 			out.close();
 			in.close();
 			// stdIn.close();
@@ -181,6 +217,16 @@ public class TCPClient {
 			System.err.println("IO failure.");
 			ex.printStackTrace();
 		}
+
+		// ObjectOutputStream objOut;
+		// try{
+		// 	objOut = new ObjectOutputStream(new FileOutputStream(path));
+		// 	objOut.writeObject(new Record3(
+		// 			(host[0] & 0xFF) + "." + (host[1] & 0xFF) + "." + (host[2] & 0xFF) + "." + (host[3] & 0xFF),
+		// 			port, "TCP", rtt, messageSize));
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// }
 		return rtt;
 	}
 }

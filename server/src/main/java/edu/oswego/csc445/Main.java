@@ -10,6 +10,7 @@ public class Main {
 
 	public static void main(String args[]) {
 		if (args.length == 1) {
+			new Thread( new StatsServiceThread("data")).start();
 			switch (args[0]) {
 				case "1":
 					new Thread(new TCPEchoServiceThread()).start();
