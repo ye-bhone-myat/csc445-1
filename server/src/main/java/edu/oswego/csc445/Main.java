@@ -5,38 +5,19 @@ import edu.oswego.csc445.simpleServices.ackServices.UDPAckServiceThread;
 import edu.oswego.csc445.simpleServices.echoServices.TCPEchoServiceThread;
 import edu.oswego.csc445.simpleServices.echoServices.UDPEchoServiceThread;
 import edu.oswego.csc445.simpleServices.throughputServices.TCPThroughputServiceThread;
+import edu.oswego.csc445.utils.Constants;
 
-public class Main {
+public class Main implements Constants {
 
-	public static void main(String args[]) {
-		if (args.length == 1) {
-			new Thread( new StatsServiceThread("data")).start();
-			switch (args[0]) {
-				case "1":
-					new Thread(new TCPEchoServiceThread()).start();
-					new Thread(new UDPEchoServiceThread()).start();
-					break;
-				case "2":
-					new Thread(new TCPThroughputServiceThread()).start();
-					break;
-				case "3":
-					new Thread(new TCPAckServiceThread()).start();
-					new Thread(new UDPAckServiceThread()).start();
-					break;
-			}
-		} else {
-			System.out.println("Usage:");
-			System.out.println("[Measurement]");
-			System.out.println();
-			System.out.println("Measurement:");
-			System.out.println("	1	measure rtt)");
-			System.out.println("	2	measure throughout (TCP only)");
-			System.out.println("	3	measure interaction between message size and number of messages");
-		}
-//		Thread udpService = new Thread(new UDPAckServiceThread());
-//		// Thread udpService = new Thread(new UDPEchoServiceThread());
-//		udpService.start();
-//		// udpService.start();
+	public static void main(String args[]){
+
+		new Thread(new TCPEchoServiceThread(TCP_ECHO_PORT)).start();
+		new Thread(new UDPEchoServiceThread(UDP_ECHO_PORT)).start();
+
+		new Thread(new TCPThroughputServiceThread(TCP_THROUGHPUT_PORT)).start();
+		
+		new Thread(new UDPAckServiceThread(UDP_ACK_PORT)).start();
+		new Thread(new TCPAckServiceThread(TCP_ACK_PORT)).start();
 	}
 
 }

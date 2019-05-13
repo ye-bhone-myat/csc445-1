@@ -15,12 +15,27 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+			
+			<script>
+		var a
+		function myfun() {
+
+				$.get("ymyat-csc344-clojure/main.clj", function (data) {
+			 	a = JSON.parse(data)
+				console.log(a)
+				//document.getElementById(d).innerHTML = data
+		})
+		}
+	</script>
+			
 </head>
 <body>
 
 <div class="container">
-    <div class="row">
-        <h4>$fr.getTarget()</h4></div>
+    <div class="row" id="d">
+        <h4>$fr.getTarget()</h4>
+		</div>
+
     <div class="row">
         <div class="col">
             <canvas id="firstRTT" width="400" height="400"></canvas>
@@ -65,9 +80,18 @@
 </div>
 </div>
 
-<script>
+
+
+
 Chart.defaults.global.responsive = false;
 var firstRTT = document.getElementById("firstRTT").getContext('2d');
+var a
+$.get("ymyat-csc344-clojure/main.clj", function (data) {
+	a = JSON.parse(data)
+	document.getElementById("firstRTT").innerHTML = a
+	
+}
+console.log(def)
 var c11 = new Chart(firstRTT, {
     type: 'line',
     data: {
@@ -75,7 +99,7 @@ var c11 = new Chart(firstRTT, {
         datasets: [{
             label: 'RTT measurement to host with TCP',
             fill: false,
-            data: $fr.getTcp1(),
+            data: "data/192.168.137.230/TCP-1-1.json",
             borderColor: [
                 'rgba(255,99,132,1)'
             ],

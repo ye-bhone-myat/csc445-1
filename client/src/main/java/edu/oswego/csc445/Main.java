@@ -2,141 +2,222 @@ package edu.oswego.csc445;
 
 import edu.oswego.csc445.clients.TCPClient;
 import edu.oswego.csc445.clients.UDPClient;
+import edu.oswego.csc445.utils.Constants;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.*;
 
-public class Main {
+public class Main implements Constants {
 
-	public static void main(String args[]) throws IOException {
+	public static void main(String args[]) {
+		String host = args[0];
+		tcp(host);
+		udp(host);
+	}
 
+	private static void tcp(String host) {
+		File f = new File("data" + File.separator + host);
+		f.mkdirs();
+		tcp1(host);
+		tcp2(host);
+		tcp3(host);
+	}
 
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	private static void udp(String host) {
+		File f = new File("data" + File.separator + host);
+		f.mkdirs();
+		udp1(host);
+		udp3(host);
+	}
 
-		if (args.length == 3) {
-			String arg = args[0] + " " + args[1] + " " + args[2];
-			Matcher matcher = Pattern.compile("(-[tu]) (\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3}) ([1-3])")
-					.matcher(arg);
-			matcher.matches();
-			String protocol = matcher.group(1);
-			String measurement = matcher.group(6);
-			byte[] host = {(byte) Integer.parseInt(matcher.group(2)), (byte) Integer.parseInt(matcher.group(3)),
-					(byte) Integer.parseInt(matcher.group(4)), (byte) Integer.parseInt(matcher.group(5))};
-			int port;
-			int messageSize = 0;
-			int nMessages = 0;
-			switch (protocol) {
-				case "-t":
-					port = 2701;
-					System.out.println("Using TCP");
-					switch (measurement) {
-						case "1":
-							System.out.println("Measuring round-trip latency");
-							System.out.print("Enter message size in bytes: ");
-							try {
-								messageSize = Integer.parseInt(in.readLine());
-							} catch (NumberFormatException ex) {
-								System.out.println("Please enter a number");
-								System.exit(1);
-							}
-							new TCPClient(host, port).t1(messageSize);
-							break;
-						case "2":
-							System.out.println("Measuring throughput ");
-							System.out.print("Enter message size in kilobytes: ");
-							try {
-								messageSize = Integer.parseInt(in.readLine());
-							} catch (NumberFormatException ex) {
-								System.out.println("Please enter a number");
-								System.exit(1);
-							}
-							new TCPClient(host, port).t2(messageSize);
-							break;
-						case "3":
-							System.out.println("Measuring interaction between message size and number of messages ");
-							System.out.println("Enter message size in bytes");
-							System.out.println("and number of messages, separated by a space [x x]: ");
-							matcher = Pattern.compile("(\\d{1,4}),? (\\d{1,4})").matcher(in.readLine());
-							matcher.matches();
-							try {
-								messageSize = Integer.parseInt(matcher.group(1));
-								nMessages = Integer.parseInt(matcher.group(2));
-							} catch (NumberFormatException ex) {
-								System.out.println("Please enter a number");
-								System.exit(1);
-							}
-							new TCPClient(host, port).t3(messageSize, nMessages);
-							break;
-						default:
-							System.out.println("Measurement:");
-							System.out.println("	1	measure rtt)");
-							System.out.println("	2	measure throughout (-t only)");
-							System.out.println("	3	measure interaction between message size and number of messages");
-							System.exit(0);
-					}
-					break;
-				case "-u":
-					port = 3701;
-					System.out.println("Using UDP");
-					switch (measurement) {
-						case "1":
-							System.out.println("Measuring round-trip latency");
-							System.out.print("Enter message size in bytes: ");
-							try {
-								messageSize = Integer.parseInt(in.readLine());
-							} catch (NumberFormatException ex) {
-								System.out.println("Please enter a number");
-								System.exit(1);
-							}
-							new UDPClient(host, port).t1(messageSize);
-							break;
-						case "2":
-							System.out.println("Throughput measurement not available for UDP");
-							break;
-						case "3":
-							System.out.println("Measuring interaction between message size and number of messages ");
-							System.out.println("Enter message size in kilobytes");
-							System.out.println("and number of messages, separated by a space [x x]: ");
-							matcher = Pattern.compile("(\\d{1,4}),? (\\d{1,4})").matcher(in.readLine());
-							matcher.matches();
-							try {
-								messageSize = Integer.parseInt(matcher.group(1));
-								nMessages = Integer.parseInt(matcher.group(2));
-							} catch (NumberFormatException ex) {
-								System.out.println("Please enter a number");
-								System.exit(1);
-							}
-							new UDPClient(host, port).t3(messageSize, nMessages);
-							break;
-						default:
-							System.out.println("Measurement:");
-							System.out.println("	1	measure rtt)");
-							System.out.println("	2	measure throughout (-t only)");
-							System.out.println("	3	measure interaction between message size and number of messages");
-							System.exit(0);
-					}
-					break;
-			}
-			System.exit(0);
-		}
-		System.out.println("Usage:");
-		System.out.println("[Protocol] [Target] [Measurement]");
-		System.out.println();
-		System.out.println("Protocol:");
-		System.out.println("	-t	TCP");
-		System.out.println("	-u	UDP");
-		System.out.println();
-		System.out.println("Target:");
-		System.out.println("	IPv4 address of target machine (xxx.xxx.xxx.xxx)");
-		System.out.println("Measurement:");
-		System.out.println("	1	measure rtt)");
-		System.out.println("	2	measure throughout (-t only)");
-		System.out.println("	3	measure interaction between message size and number of messages");
+	private static void write(String path, String host, int port, String protocol,
+							  int task, float stat, int size) throws IOException {
 
+		PrintWriter printWriter = new PrintWriter(
+				new FileOutputStream(new File(path + protocol + "-" + task + "-" + size + ".json"))
+				, true);
+		printWriter.println("{" +
+				"\"host\": " + "\"" + host + "\"" +
+				",\"port\": " + port +
+				",\"protocol\": " + "\"" + protocol + "\"" +
+				",\"stat\": " + stat +
+				",\"size\": " + size +
+				"}");
+		printWriter.close();
 
 	}
+
+	private static void tcp1(String host) {
+		String protocol = "TCP";
+		float m1, m64, m1024;
+		int port = 2701;
+		String path = "data" + File.separator + host + File.separator;
+		TCPClient tcp = new TCPClient(host, port);
+		long rtt = 0;
+		ObjectOutputStream objOut = null;
+
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += tcp.t1(1);
+		}
+		m1 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 1 byte using " + protocol + ": " + m1 + " ms");
+
+		rtt = 0;
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += tcp.t1(64);
+		}
+		m64 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 64 bytes using " + protocol + ": " + m64 + " ms");
+		// System.out.println(((float) (rtt / ATTEMPTS))/1000000);
+		rtt = 0;
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += tcp.t1(1024);
+		}
+		m1024 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 1024 bytes using " + protocol + ": " + m1024 + " ms");
+
+		try {
+			write(path, host, port, protocol, 1, m1, 1);
+			write(path, host, port, protocol, 1, m64, 64);
+			write(path, host, port, protocol, 1, m1024, 1024);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void udp1(String host) {
+		String protocol = "UDP";
+		int port = 3701;
+		float m1, m64, m1024;
+		String path = "data" + File.separator + host + File.separator;
+		UDPClient udp = new UDPClient(host, port);
+		long rtt = 0;
+
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += udp.t1(1);
+		}
+		m1 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 1 byte using " + protocol + ": " + m1 + " ms");
+
+		rtt = 0;
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += udp.t1(64);
+		}
+		m64 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 64 bytes using " + protocol + ": " + m64 + " ms");
+		// System.out.println(((float) (rtt / ATTEMPTS))/1000000);
+		rtt = 0;
+		for (int i = 0; i < ATTEMPTS; ++i) {
+			rtt += udp.t1(1024);
+		}
+		m1024 = ((float) (rtt / ATTEMPTS)) / 1000000;
+		System.out.println("RTT for 1024 bytes using " + protocol + ": " + m1024 + " ms");
+
+		try {
+			write(path, host, port, protocol, 1, m1, 1);
+			write(path, host, port, protocol, 1, m64, 64);
+			write(path, host, port, protocol, 1, m1024, 1024);
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void tcp2(String host) {
+		String protocol = "TCP";
+		int port = 4701;
+		int[] sizes = {1, 16, 64, 256, 1024};
+		double[] avgThroughputs = new double[sizes.length];
+		String path = "data" + File.separator + host + File.separator;
+		TCPClient tcp = new TCPClient(host, port);
+		ObjectOutputStream objOut = null;
+
+		for (int i = 0; i < avgThroughputs.length; ++i) {
+			double throughput = 0;
+			for (int j = 0; j < ATTEMPTS; ++j) {
+				throughput += tcp.t2(sizes[i]);
+			}
+			avgThroughputs[i] = throughput / ATTEMPTS;
+			System.out.println(sizes[i] + " : " + avgThroughputs[i] + " Mbps");
+		}
+
+		try {
+
+			for (int i = 0; i < avgThroughputs.length; ++i) {
+				int size = (sizes[i] * 1024);
+				write(path, host, port, protocol, 2, (float) avgThroughputs[i], size);
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void tcp3(String host) {
+		String protocol = "TCP";
+		int port = 6701;
+		int[] sizes = {1024, 512, 256};
+		int[] nMessages = new int[sizes.length];
+		for (int i = 0; i < sizes.length; ++i) {
+			nMessages[i] = 1024 * (1024 / sizes[i]);
+		}
+		float[] avgRtt = new float[sizes.length];
+		String path = "data" + File.separator + host + File.separator;
+		TCPClient tcp = new TCPClient(host, port);
+		ObjectOutputStream objOut = null;
+
+		for (int i = 0; i < avgRtt.length; ++i) {
+			double rtt = 0;
+			for (int j = 0; j < ATTEMPTS; ++j) {
+				rtt += tcp.t3(sizes[i], nMessages[i]);
+			}
+			avgRtt[i] = (((float) (rtt / ATTEMPTS)) / 1000000) / 1000;
+			System.out.println(sizes[i] + " : " + avgRtt[i] + " s");
+		}
+
+		try {
+
+			for (int i = 0; i < avgRtt.length; ++i) {
+				int size = (sizes[i] * 1024);
+				write(path, host, port, protocol, 3, avgRtt[i], size);
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	private static void udp3(String host) {
+		String protocol = "UDP";
+		int port = 5702;
+		int[] sizes = {1024, 512, 256};
+		int[] nMessages = new int[sizes.length];
+		for (int i = 0; i < sizes.length; ++i) {
+			nMessages[i] = 1024 * (1024 / sizes[i]);
+		}
+		float[] avgRtt = new float[sizes.length];
+		String path = "data" + File.separator + host + File.separator;
+		UDPClient udp = new UDPClient(host, port);
+		ObjectOutputStream objOut = null;
+
+		for (int i = 0; i < avgRtt.length; ++i) {
+			double rtt = 0;
+			for (int j = 0; j < ATTEMPTS; ++j) {
+				rtt += udp.t3(sizes[i], nMessages[i]);
+			}
+			avgRtt[i] = (((float) (rtt / ATTEMPTS)) / 1000000) / 1000;
+			System.out.println(sizes[i] + " : " + avgRtt[i] + " s");
+		}
+
+		try {
+
+			for (int i = 0; i < avgRtt.length; ++i) {
+				int size = (sizes[i] * 1024);
+				write(path, host, port, protocol, 2, (float) avgRtt[i], size);
+			}
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+
 
 }

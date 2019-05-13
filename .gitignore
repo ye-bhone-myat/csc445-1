@@ -1,1 +1,8 @@
 target
+
+*.zip
+*.tar
+*.json
+data
+
+.idea

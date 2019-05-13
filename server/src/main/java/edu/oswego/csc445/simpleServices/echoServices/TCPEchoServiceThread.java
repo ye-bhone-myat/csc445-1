@@ -4,13 +4,19 @@ import java.io.*;
 import java.net.*;
 
 public class TCPEchoServiceThread extends Thread {
-    static final int PORT = 2701;
+
+    int port;
+    
+    public TCPEchoServiceThread(int port){
+		super();
+		this.port = port;
+	}
 
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("TCP echo service started at " +
-					new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+					new InetSocketAddress(InetAddress.getLocalHost(), port));
 
             for (;;) {
                 Socket client = serverSocket.accept();
@@ -19,14 +25,11 @@ public class TCPEchoServiceThread extends Thread {
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
                 String cmd = in.readLine();
-				out.println(cmd);
-
-                System.out.println("TCP server received message of length " + cmd.length() + " bytes");
-                System.out.println("sender: " + client.getInetAddress().getCanonicalHostName());
+                out.println(cmd);
 
                 out.close();
                 in.close();
-                // client.close();
+                client.close();
             }
         } catch (IOException ex) {
             ex.printStackTrace();

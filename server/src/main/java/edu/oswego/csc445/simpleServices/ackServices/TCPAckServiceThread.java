@@ -4,31 +4,28 @@ import java.io.*;
 import java.net.*;
 
 public class TCPAckServiceThread extends Thread {
-    static final int PORT = 2701;
+
+    int port;
+
+    public TCPAckServiceThread (int port ){
+        super();
+        this.port = port;
+    }
 
     public void run() {
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("TCP ack service started at " +
-					new InetSocketAddress(InetAddress.getLocalHost(), PORT));
+					new InetSocketAddress(InetAddress.getLocalHost(), port));
 
             for (;;) {
                 Socket client = serverSocket.accept();
 
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                String message;
-                String cmd = "";
-//                = in.readLine();
-//
-                while ((message = in.readLine()) != null) {
-                    cmd += message;
+                while (in.readLine() != null) {
                     out.println("*");
                 }
-
-                System.out.println("TCP ack service received message of length " + cmd.length() + " bytes");
-                System.out.println("sender: " + client.getInetAddress().getCanonicalHostName());
-                // System.out.println("replying with '*'");
 
                 out.close();
                 in.close();
