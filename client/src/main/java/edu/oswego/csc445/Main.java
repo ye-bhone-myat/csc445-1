@@ -17,8 +17,8 @@ public class Main implements Constants {
 	private static void tcp(String host) {
 		File f = new File("data" + File.separator + host);
 		f.mkdirs();
-		tcp1(host);
-		tcp2(host);
+//		tcp1(host);
+//		tcp2(host);
 		tcp3(host);
 	}
 
@@ -49,7 +49,7 @@ public class Main implements Constants {
 	private static void tcp1(String host) {
 		String protocol = "TCP";
 		float m1, m64, m1024;
-		int port = 2701;
+		int port = TCP_ECHO_PORT;
 		String path = "data" + File.separator + host + File.separator;
 		TCPClient tcp = new TCPClient(host, port);
 		long rtt = 0;
@@ -86,7 +86,7 @@ public class Main implements Constants {
 
 	private static void udp1(String host) {
 		String protocol = "UDP";
-		int port = 3701;
+		int port = UDP_ECHO_PORT;
 		float m1, m64, m1024;
 		String path = "data" + File.separator + host + File.separator;
 		UDPClient udp = new UDPClient(host, port);
@@ -123,7 +123,7 @@ public class Main implements Constants {
 
 	private static void tcp2(String host) {
 		String protocol = "TCP";
-		int port = 4701;
+		int port = TCP_THROUGHPUT_PORT;
 		int[] sizes = {1, 16, 64, 256, 1024};
 		double[] avgThroughputs = new double[sizes.length];
 		String path = "data" + File.separator + host + File.separator;
@@ -153,7 +153,7 @@ public class Main implements Constants {
 
 	private static void tcp3(String host) {
 		String protocol = "TCP";
-		int port = 6701;
+		int port = TCP_ACK_PORT;
 		int[] sizes = {1024, 512, 256};
 		int[] nMessages = new int[sizes.length];
 		for (int i = 0; i < sizes.length; ++i) {
@@ -187,7 +187,7 @@ public class Main implements Constants {
 
 	private static void udp3(String host) {
 		String protocol = "UDP";
-		int port = 5702;
+		int port = UDP_ACK_PORT;
 		int[] sizes = {1024, 512, 256};
 		int[] nMessages = new int[sizes.length];
 		for (int i = 0; i < sizes.length; ++i) {
