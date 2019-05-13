@@ -1,16 +1,16 @@
-package edu.oswego.csc445.utils;
+package edu.oswego.csc445.utils.Records;
 
 public class Record1 extends Record{
 
 	private static final int TASK = 1;
-	private long stat;
+	private float stat;
 
-	public Record1(String host, int port, String protocol, long stat, int size) {
+	public Record1(String host, int port, String protocol, float stat, int size) {
 		super(host, port, protocol, size);
 		this.stat = stat;
 	}
 
-	public long getStat(){
+	public float getStat(){
 		return stat;
 	}
 

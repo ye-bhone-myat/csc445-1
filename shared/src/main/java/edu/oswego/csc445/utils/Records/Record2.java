@@ -1,4 +1,4 @@
-package edu.oswego.csc445.utils;
+package edu.oswego.csc445.utils.Records;
 
 public class Record2 extends Record{
 
