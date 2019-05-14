@@ -17,8 +17,8 @@ public class Main implements Constants {
 	private static void tcp(String host) {
 		File f = new File("data" + File.separator + host);
 		f.mkdirs();
-//		tcp1(host);
-//		tcp2(host);
+		tcp1(host);
+		tcp2(host);
 		tcp3(host);
 	}
 
@@ -188,7 +188,7 @@ public class Main implements Constants {
 	private static void udp3(String host) {
 		String protocol = "UDP";
 		int port = UDP_ACK_PORT;
-		int[] sizes = {1024, 512, 256};
+		int[] sizes = { 256};
 		int[] nMessages = new int[sizes.length];
 		for (int i = 0; i < sizes.length; ++i) {
 			nMessages[i] = 1024 * (1024 / sizes[i]);
@@ -202,21 +202,21 @@ public class Main implements Constants {
 			double rtt = 0;
 			for (int j = 0; j < ATTEMPTS; ++j) {
 				rtt += udp.t3(sizes[i], nMessages[i]);
+				System.out.println("Attempt " + ( j + 1 ));
 			}
 			avgRtt[i] = (((float) (rtt / ATTEMPTS)) / 1000000) / 1000;
 			System.out.println(sizes[i] + " : " + avgRtt[i] + " s");
-		}
 
-		try {
+			try {
 
-			for (int i = 0; i < avgRtt.length; ++i) {
 				int size = (sizes[i] * 1024);
-				write(path, host, port, protocol, 2, (float) avgRtt[i], size);
-			}
+				write(path, host, port, protocol, 2, avgRtt[i], size);
 
-		} catch (IOException ex) {
-			ex.printStackTrace();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
 		}
+
 	}
 
 

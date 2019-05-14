@@ -97,17 +97,13 @@ public class UDPClient {
 		try {
 			byte[] message = new byte[messageSize];
 			Arrays.fill(message, (byte) 65);
-			// System.out.println("Outbound message to " + echoServerAddress.getHostAddress() + " from port " + port);
 			DatagramPacket sendPacket = new DatagramPacket(message, message.length, echoServerAddress, port);
-			DatagramPacket rcvePacket = new DatagramPacket(new byte[2], 1, echoServerAddress, port);
 			long transmit = System.nanoTime();
 			for (int i = 0; i < nMessages; ++i) {
 				echoSocket.send(sendPacket);
-				// System.out.println("Transferred");
-				echoSocket.receive(rcvePacket);
+				echoSocket.receive(sendPacket);
 			}
 			rtt = System.nanoTime() - transmit;
-			// System.out.println("Transfer finished");
 			echoSocket.close();
 
 		} catch (IOException e) {

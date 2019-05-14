@@ -3,122 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Assignment 1 Statistics</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
-			
-			<script>
-		var a
-		function myfun() {
 
-				$.get("ymyat-csc344-clojure/main.clj", function (data) {
-			 	a = JSON.parse(data)
-				console.log(a)
-				//document.getElementById(d).innerHTML = data
-		})
-		}
-	</script>
-			
+
 </head>
+
 <body>
 
-<div class="container">
-    <div class="row" id="d">
-        <h4>$fr.getTarget()</h4>
-		</div>
+<div>
 
-    <div class="row">
-        <div class="col">
-            <canvas id="firstRTT" width="400" height="400"></canvas>
+    <div class="container">
+        <div class="row">
+            <div class="row">
+                <h4>"kamikaze-grande" to "kamikaze-viejo"</h4>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5>RTT Measurements</h5>
+                    <canvas id="firstRTT" width="400" height="400"></canvas>
+                </div>
+                <div class="col">
+                    <h5>Throughput Measurements (TCP only; measured two-ways)</h5>
+                    <canvas id="firstThroughput" width="400" height="400"></canvas>
+                </div>
+                <div class="col">
+                    <h5>Measurement of Sending Multiple Messages</h5>
+                    <canvas id="firstMultiMsg" width="400" height="400"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col">
-            <canvas id="firstThroughput" width="400" height="400"></canvas>
+
+        <div class="row">
+            <div class="row">
+                <h4>"kamikaze-grande" to "pi.cs.oswego.edu"</h4>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5>RTT Measurements</h5>
+                    <canvas id="secondRTT" width="400" height="400"></canvas>
+                </div>
+                <div class="col">
+                    <h5>Throughput Measurements (TCP only; measured two-ways)</h5>
+                    <canvas id="secondThroughput" width="400" height="400"></canvas>
+                </div>
+                <div class="col">
+                    <h5>Measurement of Sending Multiple Messages</h5>
+                    <canvas id="secondMultiMsg" width="400" height="400"></canvas>
+                </div>
+            </div>
         </div>
-        <div class="col">
-            <canvas id="firstMultiMsg" width="400" height="400"></canvas>
-        </div>
-    </div>
-    <div/>
-    <div class="row">
-        <h4>$sr.getTarget()</h4>
-    </div>
-    <div class="row">
-        <div class="col">
-            <canvas id="secondRTT" width="400" height="400"></canvas>
-        </div>
-        <div class="col">
-            <canvas id="secondThroughput" width="400" height="400"></canvas>
-        </div>
-        <div class="col">
-            <canvas id="secondMultiMsg" width="400" height="400"></canvas>
-        </div>
+
+
     </div>
 </div>
-<div/>
-<div class="row">
-    <h4>$tr.getTarget()</h4>
-</div>
-<div class="row">
-    <div class="col">
-        <canvas id="thirdRTT" width="400" height="400"></canvas>
-    </div>
-    <div class="col">
-        <canvas id="thirdThroughput" width="400" height="400"></canvas>
-    </div>
-    <div class="col">
-        <canvas id="thirdMultiMsg" width="400" height="400"></canvas>
-    </div>
-</div>
-</div>
 
+<script>
+    Chart.defaults.global.responsive = false; // turn off responsiveness ( graph doesn't take up whole page)
 
+var rttOptions = {
 
-
-Chart.defaults.global.responsive = false;
-var firstRTT = document.getElementById("firstRTT").getContext('2d');
-var a
-$.get("ymyat-csc344-clojure/main.clj", function (data) {
-	a = JSON.parse(data)
-	document.getElementById("firstRTT").innerHTML = a
-	
-}
-console.log(def)
-var c11 = new Chart(firstRTT, {
-    type: 'line',
-    data: {
-        labels: $fr.get1Label(),
-        datasets: [{
-            label: 'RTT measurement to host with TCP',
-            fill: false,
-            data: "data/192.168.137.230/TCP-1-1.json",
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        },
-        {
-            label: 'RTT measurement to host with UDP',
-            fill: false,
-            data: $fr.getUdp1(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
+    tooltips:{
+        callbacks: {
+            label: (item) => item.yLabel +' ms',
         }
-        ]
     },
-    options: {
     animation: {
             duration: 0, // general animation time
         },
@@ -127,390 +77,226 @@ var c11 = new Chart(firstRTT, {
         },
         responsiveAnimationDuration: 0, // animation duration after a resize
         scales: {
-            yAxes: [{
+            xAxes: [{
                 ticks: {
-                    beginAtZero:true
+                    callback: function(label, index, labels) {
+                        return label + ' B';
+                    }
                 }
             }]
         }
     }
+
+var throughputOptions = {
+
+    tooltips:{
+        callbacks: {
+            label: (item) => item.yLabel +' Mbps',
+        }
+    },
+    animation: {
+            duration: 0, // general animation time
+        },
+        hover: {
+            animationDuration: 0, // duration of animations when hovering an item
+        },
+        responsiveAnimationDuration: 0, // animation duration after a resize
+        scales: {
+            xAxes: [{
+                ticks: {
+                    callback: function(label, index, labels) {
+                        return label + ' KB';
+                    }
+                }
+            }]
+        }
+    }
+
+    var multiOptions = {
+
+    tooltips:{
+        callbacks: {
+            label: (item) => item.yLabel +' s',
+        }
+    },
+    animation: {
+            duration: 0, // general animation time
+        },
+        hover: {
+            animationDuration: 0, // duration of animations when hovering an item
+        },
+        responsiveAnimationDuration: 0, // animation duration after a resize
+        scales: {
+            xAxes: [{
+                ticks: {
+                    callback: function(label, index, labels) {
+                        return label + ' B';
+                    }
+                }
+            }]
+        }
+    }
+
+var firstRTT = document.getElementById("firstRTT").getContext('2d');
+new Chart(firstRTT, {
+    type: 'line',
+    data: {
+        labels: [1, 64, 1024],
+        datasets: [{
+            label: 'RTT measurement to host with TCP, in ms',
+            fill: false,
+            data: [7.248271, 6.812392, 3.978705],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
+            lineTension: 0
+        },
+        {
+            label: 'RTT measurement to host with UDP, in ms',
+            fill: false,
+            data: [6.419168, 6.148001, 5.962598],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
+            lineTension: 0
+        },
+        ]
+    },
+    options: rttOptions
 });
 
 var firstThroughput = document.getElementById("firstThroughput").getContext('2d');
-var c12 = new Chart(firstThroughput, {
+new Chart(firstThroughput, {
     type: 'line',
     data: {
-        labels: $fr.get2Label(),
+        labels: [1, 16, 64, 256, 1024],
         datasets: [{
-            label: 'Throughput measurement to host with TCP',
+            label: 'Throughput from client',
             fill: false,
-            data: $fr.getTcp2(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
+            data: [64.00455, 241.03444, 28.490244, 20.377798, 11.811293],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
         },
         {
-            label: 'Throughput measurement to client with TCP',
+            label: 'Throughput from server',
             fill: false,
-            data: $fr.getTcp2Server(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
+            data: [42.9, 294,4, 56.6, 53.2],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
-        }
+        },
         ]
     },
-    options: {
-    animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
+    options: throughputOptions
 });
+
 
 var firstMultiMsg = document.getElementById("firstMultiMsg").getContext('2d');
-var c13 = new Chart(firstMultiMsg, {
+new Chart(firstMultiMsg, {
     type: 'line',
     data: {
-        labels: $fr.get3Label(),
+        labels: [256, 512, 1024],
         datasets: [{
-            label: 'RTT measurement to host with TCP',
+            label: 'Transfer times using TCP',
             fill: false,
-            data: $fr.getTcp3(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
+            data: [0.07238192, 0.043882564, 0.042448804],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
         },
         {
-            label: 'RTT measurement to host with UDP',
+            label: 'Transfer times using UDP',
             fill: false,
-            data: $fr.getUdp3(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
+            data: [25.168005, 11.808049, 5.482782],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
-        }
+        },
         ]
     },
-    options: {
-        animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
+    options: multiOptions
 });
-
-//------END OF 1------
 
 
 var secondRTT = document.getElementById("secondRTT").getContext('2d');
-var c21 = new Chart(secondRTT, {
+new Chart(secondRTT, {
     type: 'line',
     data: {
-        labels: $sr.get1Label(),
+        labels: [1, 64, 1024],
         datasets: [{
-            label: 'RTT measurement to host with TCP',
+            label: 'RTT measurement to host with TCP, in ms',
             fill: false,
-            data: $sr.getTcp1(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
+            data: [7.248271, 6.812392, 3.978705],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
         },
         {
-            label: 'RTT measurement to host with UDP',
+            label: 'RTT measurement to host with UDP, in ms',
             fill: false,
-            data: $sr.getUdp1(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
+            data: [6.419168, 6.148001, 5.962598],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
-        }
+        },
         ]
     },
-    options: {
-    animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
+    options: rttOptions
 });
 
 var secondThroughput = document.getElementById("secondThroughput").getContext('2d');
-var c22 = new Chart(secondThroughput, {
+new Chart(secondThroughput, {
     type: 'line',
     data: {
-        labels: $sr.get2Label(),
+        labels: [1, 16, 64, 256, 1024],
         datasets: [{
-            label: 'Throughput measurement to host with TCP',
+            label: 'Throughput from client',
             fill: false,
-            data: $sr.getTcp2(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
+            data: [64.00455, 241.03444, 28.490244, 20.377798, 11.811293],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
         },
         {
-            label: 'Throughput measurement to client with TCP',
+            label: 'Throughput from server',
             fill: false,
-            data: $sr.getTcp2Server(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
+            data: [42.9, 294,4, 56.6, 53.2],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
-        }
+        },
         ]
     },
-    options: {
-    animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
+    options: throughputOptions
 });
+
 
 var secondMultiMsg = document.getElementById("secondMultiMsg").getContext('2d');
-var c23 = new Chart(secondMultiMsg, {
+new Chart(secondMultiMsg, {
     type: 'line',
     data: {
-        labels: $sr.get3Label(),
+        labels: [256, 512, 1024],
         datasets: [{
-            label: 'RTT measurement to host with TCP',
+            label: 'Transfer times using TCP',
             fill: false,
-            data: $sr.getTcp3(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
+            data: [0.07238192, 0.043882564, 0.042448804],
+            borderColor: 'rgba(99,255,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
         },
         {
-            label: 'RTT measurement to host with UDP',
+            label: 'Transfer times using UDP',
             fill: false,
-            data: $sr.getUdp3(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
+            data: [25.168005, 11.808049, 5.482782],
+            borderColor: 'rgba(255,99,132,0.8)',
+            borderWidth: 2,
             lineTension: 0
-        }
+        },
         ]
     },
-    options: {
-        animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
+    options: multiOptions
 });
-
-//------END OF 2------
-
-
-var thirdRTT = document.getElementById("thirdRTT").getContext('2d');
-var c31 = new Chart(thirdRTT, {
-    type: 'line',
-    data: {
-        labels: $tr.get1Label(),
-        datasets: [{
-            label: 'RTT measurement to host with TCP',
-            fill: false,
-            data: $tr.getTcp1(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        },
-        {
-            label: 'RTT measurement to host with UDP',
-            fill: false,
-            data: $tr.getUdp1(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        }
-        ]
-    },
-    options: {
-    animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
-var thirdThroughput = document.getElementById("thirdThroughput").getContext('2d');
-var c32 = new Chart(thirdThroughput, {
-    type: 'line',
-    data: {
-        labels: $tr.get2Label(),
-        datasets: [{
-            label: 'Throughput measurement to host with TCP',
-            fill: false,
-            data: $tr.getTcp2(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        },
-        {
-            label: 'Throughput measurement to client with TCP',
-            fill: false,
-            data: $tr.getTcp2Server(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        }
-        ]
-    },
-    options: {
-    animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
-var thirdMultiMsg = document.getElementById("thirdMultiMsg").getContext('2d');
-var c33 = new Chart(thirdMultiMsg, {
-    type: 'line',
-    data: {
-        labels: $tr.get3Label(),
-        datasets: [{
-            label: 'RTT measurement to host with TCP',
-            fill: false,
-            data: $tr.getTcp3(),
-            borderColor: [
-                'rgba(255,99,132,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        },
-        {
-            label: 'RTT measurement to host with UDP',
-            fill: false,
-            data: $tr.getUdp3(),
-            borderColor: [
-                'rgba(132,255,99,1)'
-            ],
-            borderWidth: 1,
-            lineTension: 0
-        }
-        ]
-    },
-    options: {
-        animation: {
-            duration: 0, // general animation time
-        },
-        hover: {
-            animationDuration: 0, // duration of animations when hovering an item
-        },
-        responsiveAnimationDuration: 0, // animation duration after a resize
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-});
-
-//------END OF 3------
-
-
-
-
-
-
-
 
 </script>
+
 </body>
 </html>

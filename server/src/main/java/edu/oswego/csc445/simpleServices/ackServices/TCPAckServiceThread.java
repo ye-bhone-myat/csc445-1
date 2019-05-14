@@ -23,9 +23,8 @@ public class TCPAckServiceThread extends Thread {
 
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                while (in.readLine() != null) {
-                    out.println("*");
-                }
+				in.readLine();
+				out.println("*");
 
                 out.close();
                 in.close();
