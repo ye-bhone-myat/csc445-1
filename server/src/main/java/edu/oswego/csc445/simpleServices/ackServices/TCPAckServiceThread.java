@@ -7,7 +7,7 @@ public class TCPAckServiceThread extends Thread {
 
     int port;
 
-    public TCPAckServiceThread (int port ){
+    public TCPAckServiceThread(int port) {
         super();
         this.port = port;
     }
@@ -16,16 +16,16 @@ public class TCPAckServiceThread extends Thread {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
             System.out.println("TCP ack service started at " +
-					new InetSocketAddress(InetAddress.getLocalHost(), port));
+                    new InetSocketAddress(InetAddress.getLocalHost(), port));
 
-            for (;;) {
+            for (; ; ) {
                 Socket client = serverSocket.accept();
 
                 PrintWriter out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                while (in.readLine() != null) {
-                    out.println("*");
-                }
+                in.readLine();
+                out.println("*");
+
 
                 out.close();
                 in.close();

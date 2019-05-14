@@ -1,7 +1,7 @@
 package edu.oswego.csc445.utils;
 
 public interface Constants{
-	int ATTEMPTS = 20;
+	int ATTEMPTS = 10;
 	int TCP_ECHO_PORT = 2701;
 	int UDP_ECHO_PORT = 3701;
 	int TCP_ACK_PORT = 4703;

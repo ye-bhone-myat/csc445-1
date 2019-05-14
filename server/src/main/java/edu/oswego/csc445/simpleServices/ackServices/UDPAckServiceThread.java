@@ -19,17 +19,18 @@ public class UDPAckServiceThread extends Thread {
 	}
 
 	public void run() {
+		DatagramSocket serverSocket;
 		try {
-			DatagramSocket serverSocket = null;
 
 			System.out.println("UDP ack service started at " + new InetSocketAddress(InetAddress.getLocalHost(), port));
-			serverSocket = new DatagramSocket(port);
 			for (;;) {
+				serverSocket = new DatagramSocket(port);
 				byte[] inBuf = new byte[1025];
 				DatagramPacket inPacket = new DatagramPacket(inBuf, inBuf.length);
 				serverSocket.receive(inPacket);
 				inPacket.setLength(1);
 				serverSocket.send(inPacket);
+				serverSocket.close();
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
